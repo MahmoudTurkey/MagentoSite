@@ -1,23 +1,25 @@
 package tests;
-import io.qameta.allure.Step;
+
+import com.aventstack.extentreports.ExtentTest;
 import io.qameta.allure.Attachment;
-import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import io.qameta.allure.Step;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
 import pages.HomePage;
+import utils.ExtentReportManager;
 
 public class SearchTest {
     WebDriver driver;
     HomePage homePage;
+    ExtentTest test;
+
+    @BeforeSuite
+    public void setUpReport() {
+        ExtentReportManager.initReport();
+    }
 
     @BeforeMethod
     public void setup() {
@@ -27,34 +29,63 @@ public class SearchTest {
         homePage = new HomePage(driver);
     }
 
-    @Test
+    @Test(description = "Valid search returns relevant results")
     public void testValidSearch() {
-        homePage.enterSearchKeyword("Hoodie");
-        //homePage.clickSearchButton();
-        driver.findElement(homePage.searchField).submit();
+        test = ExtentReportManager.createTest("Test: Valid Search Functionality");
 
-        // Wait & verify results contain the keyword
-        boolean isResultVisible = driver.findElements(By.xpath("//*[contains(text(),'Hoodie')]")).size() > 0;
-        Assert.assertTrue(isResultVisible, "Search results do not contain expected keyword.");
+        try {
+            test.info("Step 1: Enter search keyword 'Hoodie'");
+            enterSearchKeyword("Hoodie");
+
+            test.info("Step 2: Submit the search");
+            submitSearch();
+
+            test.info("Step 3: Validate search results contain 'Hoodie'");
+            boolean isResultVisible = driver.findElements(By.xpath("//*[contains(text(),'Hoodie')]")).size() > 0;
+            Assert.assertTrue(isResultVisible, "Search results do not contain expected keyword.");
+            test.pass("Search results are visible and valid");
+
+        } catch (Exception e) {
+            test.fail("Test failed due to exception: " + e.getMessage());
+            saveScreenshot("Search Failure Screenshot");
+            throw e;
+        }
     }
 
-
     @AfterMethod
-    public void tearDown() {
+    public void tearDown(ITestResult result) {
+        if (result.getStatus() == ITestResult.FAILURE) {
+            saveScreenshot("Failure Screenshot");
+        }
         quitDriver();
     }
 
-    @Step("Tear down the WebDriver")
+    @AfterSuite
+    public void tearDownReport() {
+        ExtentReportManager.flushReport();
+    }
+
+    // ================= Allure + Helper Methods ================= //
+
+    @Step("Enter search keyword: {keyword}")
+    public void enterSearchKeyword(String keyword) {
+        homePage.enterSearchKeyword(keyword);
+    }
+
+    @Step("Submit the search")
+    public void submitSearch() {
+        driver.findElement(homePage.searchField).submit();
+    }
+
+    @Step("Quit browser")
     public void quitDriver() {
         if (driver != null) {
-            try {
-                driver.quit();
-            } catch (Exception e) {
-                System.err.println("Error during driver.quit(): " + e.getMessage());
-                e.printStackTrace();
-            }
+            driver.quit();
         }
+    }
 
-
+    @Attachment(value = "{screenshotName}", type = "image/png")
+    public byte[] saveScreenshot(String screenshotName) {
+        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
     }
 }
