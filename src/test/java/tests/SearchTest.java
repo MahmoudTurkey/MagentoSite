@@ -1,11 +1,15 @@
 package tests;
-
+import io.qameta.allure.Step;
+import io.qameta.allure.Attachment;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -35,36 +39,22 @@ public class SearchTest {
     }
 
 
-@AfterMethod
-public void tearDown(ITestResult result) {
-    if (ITestResult.FAILURE == result.getStatus()) {
-        saveScreenshot();
-    }
-    quitDriver();
-}
+    @AfterMethod
+    public void tearDown() {
+        quitDriver();
+    }
 
-@Attachment(value = "Screenshot on Failure", type = "image/png")
-public byte[] saveScreenshot() {
-    return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-}
-
-
-// @AfterMethod
-// public void tearDown() {
-//     quitDriver();
-// }
-
-// @Step("Tear down the WebDriver")
-// public void quitDriver() {
-//     if (driver != null) {
-//         try {
-//             driver.quit();
-//         } catch (Exception e) {
-//             System.err.println("Error during driver.quit(): " + e.getMessage());
-//             e.printStackTrace();
-//         }
-//     }
+    @Step("Tear down the WebDriver")
+    public void quitDriver() {
+        if (driver != null) {
+            try {
+                driver.quit();
+            } catch (Exception e) {
+                System.err.println("Error during driver.quit(): " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
 
 
-
+    }
 }
