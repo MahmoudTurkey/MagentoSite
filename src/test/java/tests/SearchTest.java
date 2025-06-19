@@ -34,18 +34,37 @@ public class SearchTest {
         Assert.assertTrue(isResultVisible, "Search results do not contain expected keyword.");
     }
 
- import io.qameta.allure.Step;
 
 @AfterMethod
-@Step("Tear down the WebDriver")
-public void tearDown() {
-    if (driver != null) {
-        try {
-            driver.quit();
-        } catch (Exception e) {
-            System.err.println("Error during driver.quit(): " + e.getMessage());
-        }
-    }
+public void tearDown(ITestResult result) {
+    if (ITestResult.FAILURE == result.getStatus()) {
+        saveScreenshot();
+    }
+    quitDriver();
 }
+
+@Attachment(value = "Screenshot on Failure", type = "image/png")
+public byte[] saveScreenshot() {
+    return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+}
+
+
+// @AfterMethod
+// public void tearDown() {
+//     quitDriver();
+// }
+
+// @Step("Tear down the WebDriver")
+// public void quitDriver() {
+//     if (driver != null) {
+//         try {
+//             driver.quit();
+//         } catch (Exception e) {
+//             System.err.println("Error during driver.quit(): " + e.getMessage());
+//             e.printStackTrace();
+//         }
+//     }
+
+
 
 }
