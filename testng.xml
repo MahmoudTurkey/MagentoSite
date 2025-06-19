@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Magento Automation Suite" parallel="false">
+    <test name="All Test Cases">
+        <classes>
+            <class name="tests.CartTest" />
+            <class name="tests.CheckoutTest" />
+            <class name="tests.SearchTest" />
+        </classes>
+    </test>
+</suite>
