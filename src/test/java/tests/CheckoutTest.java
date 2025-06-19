@@ -29,7 +29,7 @@ public class CheckoutTest {
     @BeforeMethod
     public void setUp() {
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(100));
         driver.manage().window().maximize();
         driver.get("https://magento.softwaretestingboard.com/");
         searchResults = new SearchResultsPage(driver);

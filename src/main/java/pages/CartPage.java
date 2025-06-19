@@ -36,7 +36,7 @@ public class CartPage {
         List<WebElement> removeLinks = driver.findElements(removeButtons);
 
         if (!removeLinks.isEmpty()) {
-            removeLinks.get(0).click(); // حذف أول عنصر
+            removeLinks.get(0).click();
         } else {
             throw new RuntimeException("No items available to remove in the cart.");
         }

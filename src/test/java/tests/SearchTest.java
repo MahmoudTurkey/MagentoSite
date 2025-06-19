@@ -26,7 +26,8 @@ public class SearchTest {
     @Test
     public void testValidSearch() {
         homePage.enterSearchKeyword("Hoodie");
-        homePage.clickSearchButton();
+        //homePage.clickSearchButton();
+        driver.findElement(homePage.searchField).submit();
 
         // Wait & verify results contain the keyword
         boolean isResultVisible = driver.findElements(By.xpath("//*[contains(text(),'Hoodie')]")).size() > 0;
