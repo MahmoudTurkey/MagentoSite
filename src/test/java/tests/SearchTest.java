@@ -34,8 +34,18 @@ public class SearchTest {
         Assert.assertTrue(isResultVisible, "Search results do not contain expected keyword.");
     }
 
-    @AfterMethod
-    public void tearDown() {
-        driver.quit();
+ import io.qameta.allure.Step;
+
+@AfterMethod
+@Step("Tear down the WebDriver")
+public void tearDown() {
+    if (driver != null) {
+        try {
+            driver.quit();
+        } catch (Exception e) {
+            System.err.println("Error during driver.quit(): " + e.getMessage());
+        }
     }
+}
+
 }
